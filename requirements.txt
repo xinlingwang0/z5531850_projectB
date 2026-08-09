@@ -1,0 +1,12 @@
+streamlit>=1.50,<2
+pandas>=2.0
+numpy>=1.24
+scipy>=1.11
+pyarrow>=12.0
+requests>=2.31
+matplotlib>=3.7
+plotly>=6,<7
+# App (deploy) dependencies only. Build/reproduction tools - nltk for the sentiment
+# model in scripts/run_part_b.py - live in requirements-dev.txt. Install both for a
+# clean-machine repro; keep the deployed app on requirements.txt so cold starts stay
+# fast (precompute sentiment and load the result, do not score it in the app).

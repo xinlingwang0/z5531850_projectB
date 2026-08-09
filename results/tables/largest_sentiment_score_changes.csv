@@ -1,0 +1,51 @@
+trading_date,ticker,sector,raw_title,baseline_compound,extended_compound,score_delta,matched_custom_terms
+2023-03-13,GS,Financials,Hedge funds stand to lap up bearish profits from bank stock rout,0.6608,-0.5559,-1.2167,"bearish, rout"
+2022-01-21,INTC,Tech,"Stock Market Today: Dow Jones, S&P 500 Tumbles; Intel To Invest $20 Billion In New Factories; Netflix Plunges On Slowing Subscriber Growth",0.3632,-0.7087,-1.0719,"plunges, tumbles"
+2021-02-10,DUK,Utilities,4 High-Yield Dividend Stocks You Can Safely Buy If the Market Crashes,0.4998,-0.395,-0.8948,crashes
+2022-06-02,ADBE,Tech,3 Growth Stocks I'm Ready to Buy If the Market Crashes in June,0.3757,-0.5155,-0.8912,crashes
+2021-03-10,T,Comm,The 4 Best Dividend Stocks to Buy If the Market Crashes,0.3685,-0.5212,-0.8896999999999999,crashes
+2021-07-12,CAT,Industrials,3 Stocks to Load Up on When the Stock Market Crashes,0.3632,-0.5252,-0.8884000000000001,crashes
+2021-07-12,NEE,Utilities,3 Stocks to Load Up on When the Stock Market Crashes,0.3632,-0.5252,-0.8884000000000001,crashes
+2021-12-15,NUE,Materials,Why Nucor Stock Crashed on Record Earnings,0.3612,-0.5267,-0.8878999999999999,crashed
+2021-10-06,PLD,RealEstate,Watch This Growth Stock If the Market Crashes,0.3612,-0.5267,-0.8878999999999999,crashes
+2022-11-22,GE,Industrials,"Meta Got Crushed, But a New Tech Stock Has Been Soaring!",-0.284,0.5976,0.8815999999999999,soaring
+2021-10-22,INTC,Tech,Here's Why Intel Shares Crashed Today,0.296,-0.5719,-0.8678999999999999,crashed
+2021-09-20,NUE,Materials,"Why Nucor, Cleveland-Cliffs, and Ferroglobe Shares Crashed Today",0.296,-0.5719,-0.8678999999999999,crashed
+2022-09-14,NUE,Materials,Why Shares in Alcoa Crashed Today,0.296,-0.5719,-0.8678999999999999,crashed
+2023-10-31,AMD,Tech,Why Lattice Semiconductor Shares Crashed Hard Today,0.2926,-0.574,-0.8666,crashed
+2021-06-01,WMT,Consumer,3 Surefire Stocks to Buy if the Market Crashes,0.2582,-0.5947,-0.8529,crashes
+2021-01-08,KO,Consumer,3 Surefire Stocks to Buy If the Market Crashes,0.2582,-0.5947,-0.8529,crashes
+2021-03-04,V,Financials,4 Surefire Stocks to Buy If the Market Crashes,0.2582,-0.5947,-0.8529,crashes
+2021-01-08,DIS,Consumer,3 Surefire Stocks to Buy If the Market Crashes,0.2582,-0.5947,-0.8529,crashes
+2021-02-17,WMT,Consumer,3 Surefire Stocks to Buy If the Market Crashes,0.2582,-0.5947,-0.8529,crashes
+2021-02-25,KO,Consumer,5 Surefire Stocks If the Market Crashes,0.25,-0.5994,-0.8494,crashes
+2021-02-25,WMT,Consumer,5 Surefire Stocks If the Market Crashes,0.25,-0.5994,-0.8494,crashes
+2021-12-02,V,Financials,US STOCKS-Wall Street ends higher in robust rebound from Omicron-driven rout,0.3849,-0.4561,-0.841,rout
+2022-01-18,MS,Financials,US STOCKS-Nasdaq futures tumble as rising yields spark tech rout,0.3653,-0.4731,-0.8384,rout
+2023-09-22,NVDA,Tech,"US STOCKS-Futures inch up after Wall St rout; Fed speakers, data in focus",0.3653,-0.4731,-0.8384,rout
+2023-05-04,GS,Financials,Pressure grows for regulatory intervention as US bank rout deepens,0.3653,-0.4731,-0.8384,rout
+2023-09-22,NVDA,Tech,"US STOCKS-Futures edge up after Wall St rout; Fed speakers, data in focus",0.3653,-0.4731,-0.8384,rout
+2022-01-18,GS,Financials,US STOCKS-Nasdaq futures tumble as rising yields spark tech rout,0.3653,-0.4731,-0.8384,rout
+2023-05-16,KO,Consumer,Turkey's market rout deepens after Erdogan's strong election showing,0.3622,-0.4758,-0.8380000000000001,rout
+2021-06-21,CVX,Energy,US STOCKS-Futures rise after Fed-induced rout,0.3612,-0.4767,-0.8379000000000001,rout
+2021-06-21,SLB,Energy,US STOCKS-Futures rise after Fed-induced rout,0.3612,-0.4767,-0.8379000000000001,rout
+2021-06-21,GS,Financials,US STOCKS-Futures rise after Fed-induced rout,0.3612,-0.4767,-0.8379000000000001,rout
+2021-06-21,XOM,Energy,US STOCKS-Futures rise after Fed-induced rout,0.3612,-0.4767,-0.8379000000000001,rout
+2021-06-21,OXY,Energy,US STOCKS-Futures rise after Fed-induced rout,0.3612,-0.4767,-0.8379000000000001,rout
+2021-11-11,DIS,Consumer,"S&P 500, Nasdaq rise after inflation-led rout; Disney weighs on Dow",0.3612,-0.4767,-0.8379000000000001,rout
+2022-02-04,MS,Financials,"US STOCKS-Nasdaq ends choppy week higher, as Amazon earnings stall tech rout",0.481,-0.3559,-0.8369,rout
+2022-02-04,WFC,Financials,"US STOCKS-Nasdaq ends choppy week higher, as Amazon earnings stall tech rout",0.481,-0.3559,-0.8369,rout
+2022-02-04,OXY,Energy,"US STOCKS-Nasdaq ends choppy week higher, as Amazon earnings stall tech rout",0.481,-0.3559,-0.8369,rout
+2022-02-04,OXY,Energy,"US STOCKS-Wall Street turns higher in seesaw session, Amazon earnings stall tech rout",0.4828,-0.3538,-0.8366,rout
+2021-05-11,OXY,Energy,US STOCKS-Tech rout set to extend as investors fear rising inflation,0.3442,-0.4905,-0.8347,rout
+2021-05-11,CVX,Energy,US STOCKS-Tech rout set to extend as investors fear rising inflation,0.3442,-0.4905,-0.8347,rout
+2023-03-14,WFC,Financials,"US STOCKS-Futures rise after bank rout, CPI data awaited",0.34,-0.4939,-0.8339000000000001,rout
+2022-10-27,AMD,Tech,Tech rout widens as Meta sinks after results,0.0,-0.8316,-0.8316,"rout, sinks"
+2022-10-27,NVDA,Tech,Tech rout widens as Meta sinks after results,0.0,-0.8316,-0.8316,"rout, sinks"
+2023-03-14,MS,Financials,Shares of US regional banks attempt recovery after SVB-fueled rout,0.3182,-0.5106,-0.8288,rout
+2023-10-04,SLB,Energy,Stocks Mixed as Bond Rout Eases,0.3182,-0.5106,-0.8288,rout
+2023-03-14,WFC,Financials,Shares of US regional banks attempt recovery after SVB-fueled rout,0.3182,-0.5106,-0.8288,rout
+2023-03-14,MS,Financials,Shares of US regional banks lick wounds after SVB-fueled rout,0.296,-0.5267,-0.8227,rout
+2023-03-14,WFC,Financials,Shares of US regional banks lick wounds after SVB-fueled rout,0.296,-0.5267,-0.8227,rout
+2023-03-14,GS,Financials,Shares of US regional banks lick wounds after SVB-fueled rout,0.296,-0.5267,-0.8227,rout
+2021-01-04,KO,Consumer,Dow Jones Tumbles to Start 2021; Apple Called Top FAANG Stock; Coca-Cola Stock Downgraded,0.0129,-0.8047,-0.8176,"downgraded, tumbles"

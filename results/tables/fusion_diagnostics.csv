@@ -1,0 +1,4 @@
+variant,lexicon,lambda,direction,initial_turnover,avg_rebalance_turnover_ex_initial,total_turnover,n_weights_clipped_to_zero,share_weights_clipped_to_zero,n_fallback_rebalances,max_stock_weight,effective_number_of_holdings,l1_distance_from_base,max_absolute_weight_change
+Equity-Only Minimum Variance,none,0.0,base,1.0,0.15124215783545752,6.293475524241013,0,0.0,0,0.2873775350355844,9.681202871201952,0.0,0.0
+Extended Sentiment Momentum,extended,1.0,momentum,1.0,0.33734783182354033,12.807174113823912,31,0.017222222222222222,0,0.47284127442324636,7.547646438173937,0.43075104789594665,0.2588890631264523
+Extended Sentiment Contrarian,extended,-1.0,contrarian,1.0,0.3370329717311398,12.796154010589893,57,0.03166666666666667,0,0.4659014014239332,7.452033369496665,0.42539069219358766,0.2564785679164975

@@ -1,0 +1,12 @@
+metric,value
+custom_term_hit_headlines,2832.0
+exact_zero_denominator,486.0
+exact_zero_numerator,486.0
+exact_zero_reclassification_rate,1.0
+neutral_band_denominator,1379.0
+neutral_band_numerator,1377.0
+neutral_band_exit_rate,0.9985496736765772
+transition_neutral_to_positive,857.0
+transition_neutral_to_negative,520.0
+transition_pos_or_neg_to_neutral,42.0
+transition_sign_flip_positive_negative,622.0

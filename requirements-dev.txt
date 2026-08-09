@@ -1,0 +1,7 @@
+# Build / reproduction-only dependencies (NOT needed by the deployed app).
+# Install alongside requirements.txt to run scripts/run_part_b.py end to end:
+#     pip install -r requirements.txt -r requirements-dev.txt
+# Keep these OUT of the deployed app so Streamlit cold starts stay fast - the app
+# should load precomputed artifacts from results/, not score sentiment at runtime.
+nltk>=3.8
+finvader>=1.0
