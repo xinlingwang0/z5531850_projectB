@@ -436,3 +436,99 @@ I checked that:
 - the Growth of $1 axis was not `log` and its underlying data was unchanged; and
 - only `streamlit_app.py` and `tests/test_app.py` were modified during the implementation and testing task.
 
+
+## Prompt Log 8 - Adding and correcting sentiment figures
+
+### What I wanted
+
+I wanted the AI to add two figures to strengthen the RiskBridge Funds Part B sentiment analysis:
+
+- Figure 9: market-wide news sentiment over 2021-2023; and
+- Figure 10: average sentiment rankings across equity sectors.
+
+Both figures had to use the existing Extended FinVADER sector index without rescoring headlines or changing the sentiment, fusion, portfolio, app,
+or report outputs.
+
+### Prompt(s)
+
+My initial prompt asked the AI to:
+
+- build Figure 9 from the shared daily Overall aggregate;
+- show the market sentiment level, a 21-valid-observation rolling mean, and relative historical sentiment deviations;
+- rank sectors in Figure 10 using mean Extended compound scores;
+- preserve missing values and avoid weighting by news volume;
+- integrate both figures into the existing build; and
+- add automated tests and conduct visual checks.
+
+After reviewing the output, I requested four corrections:
+
+- prevent Figure 9 from displaying 2020 or 2024 on its axis;
+- correct Figure 10's axis label because it displays both Mean and Median;
+- replace the inaccurate "baseline vs Extended" source note with an Extended-only note; and
+- make missing required outputs fail tests instead of triggering `pytest.skip`.
+
+### What the assistant produced
+
+The AI added Figures 9 and 10 to the sentiment build. Figure 9 presents the market-wide sentiment level and average sector z-score, while Figure 10
+ranks all ten sectors using their mean, median, and valid observation counts.
+
+It also added tests for date limits, aggregation, rolling missing values, sector rankings, plotted elements, and required output files.
+
+### What was wrong or risky
+
+My review identified four issues:
+
+- Figure 9's automatic axis margins displayed dates from 2020 and 2024;
+- Figure 10's axis label did not accurately describe both Mean and Median;
+- the source note incorrectly implied a Baseline comparison; and
+- skipped missing-output tests could conceal a failure to generate the figures.
+
+### What I changed and why
+
+I required Figure 9's axis to be restricted to the actual data period and changed Figure 10's axis label to:
+
+`Extended FinVADER compound score`
+
+Both figures were given an Extended-only source note identifying the 30-term custom lexicon and the 2021-2023 application period. Tests were also
+changed to fail with clear messages when required inputs or PNG files were missing.
+
+### How I verified it
+
+I checked that:
+
+- Figure 9's data and visible ticks were limited to 2021-2023;
+- Figure 10's Mean, Median, ranking, and axis label were correct;
+- neither source note contained "baseline vs Extended";
+- missing required inputs or PNGs caused test failures rather than skips;
+- the hashes of Figures 1-8 remained unchanged; and
+- no sentiment calculations, fusion, portfolio, app, report, or existing CSV outputs were modified.
+
+
+## Prompt Log 9 - Private GitHub deployment preparation
+
+### What I wanted
+
+I wanted the AI to prepare the completed RiskBridge Funds Part B project for deployment without changing any analysis, results, tests, or
+Streamlit code.
+
+### Prompt(s)
+
+My instruction was:
+
+> Confirm that the working directory is `z5531850_projectB`, read `AGENTS.md` and `docs/STUDENT_DEPLOY.md`, and run
+> `scripts/check_handin.py`. Do not modify `src/`, `streamlit_app.py`, `tests/`, or `results/`. Initialise Git in the project folder,
+> commit the code and generated results, and push them to a new private GitHub repository. Streamlit deployment itself remains my
+> responsibility because it requires my login.
+
+### What the assistant produced
+
+The AI completed the deployment-preparation workflow by checking the project location and instructions, validating the hand-in structure,
+initialising the repository, committing the required project files, and pushing them to a new private GitHub repository.
+
+### What was wrong or risky
+
+I found no material errors or issues requiring correction. The task remained limited to repository and deployment preparation.
+
+### What I changed and why
+
+I made no follow-up changes because the AI followed the requested scope and did not alter the completed analysis or application.
