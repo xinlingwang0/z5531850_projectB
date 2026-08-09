@@ -120,8 +120,46 @@ def apply_theme() -> None:
     mpl.rcParams.update(THEME_RC)
 
 
-def caption(title: str, note: str) -> str:
-    return f"{title}\n{note}"
+def add_figure_heading(
+    title: str, note: str, *, fig: mpl.figure.Figure | None = None
+) -> tuple[mpl.text.Text, mpl.text.Text]:
+    """Add a consistent bold title and regular-weight explanatory note."""
+    fig = plt.gcf() if fig is None else fig
+    title_size = 12.0
+    note_size = 10.0
+    title_y = 0.985
+    figure_height = float(fig.get_size_inches()[1])
+
+    title_artist = fig.suptitle(
+        title,
+        x=0.5,
+        y=title_y,
+        ha="center",
+        va="top",
+        fontsize=title_size,
+        fontweight="bold",
+        color="#111827",
+    )
+    title_height = title_size * 1.25 / (72.0 * figure_height)
+    interline_gap = 2.0 / (72.0 * figure_height)
+    note_y = title_y - title_height - interline_gap
+    note_artist = fig.text(
+        0.5,
+        note_y,
+        note,
+        ha="center",
+        va="top",
+        fontsize=note_size,
+        fontweight="normal",
+        linespacing=1.25,
+        color="#111827",
+    )
+
+    note_lines = note.count("\n") + 1
+    note_height = note_size * 1.25 * note_lines / (72.0 * figure_height)
+    bottom_gap = 4.0 / (72.0 * figure_height)
+    fig._riskbridge_heading_bottom = note_y - note_height - bottom_gap
+    return title_artist, note_artist
 
 
 def add_figure_footer(source: str, sample: str) -> None:
@@ -136,7 +174,9 @@ def finalise_figure(
 ) -> pathlib.Path:
     """Apply the common footer, layout and save settings used by every figure below."""
     add_figure_footer(source, sample)
-    plt.tight_layout(rect=[0, 0.07, 1, top])
+    fig = plt.gcf()
+    heading_bottom = float(getattr(fig, "_riskbridge_heading_bottom", top))
+    plt.tight_layout(rect=[0, 0.07, 1, min(top, heading_bottom)])
     plt.savefig(path, dpi=180, bbox_inches="tight")
     plt.close()
     return path
@@ -210,34 +250,57 @@ def plot_fund_growth(fund_returns: pd.DataFrame) -> pathlib.Path:
         if endpoints:
             endpoints.sort(key=lambda item: item[2])
             y_lo, y_hi = ax.get_ylim()
-            min_gap = (np.log10(y_hi) - np.log10(y_lo)) * 0.065
+            min_gap = (np.log10(y_hi) - np.log10(y_lo)) * 0.10
             stacked_log = []
             for _, _, y_value in endpoints:
                 candidate = np.log10(y_value)
                 if stacked_log and candidate < stacked_log[-1] + min_gap:
                     candidate = stacked_log[-1] + min_gap
                 stacked_log.append(candidate)
-            date_span = panel["date"].max() - panel["date"].min()
-            label_x = panel["date"].max() + date_span * 0.02
-            ax.set_xlim(right=panel["date"].max() + date_span * 0.17)
+            # Reserve a slim, unlabeled area after the final observation for
+            # direct endpoint labels. Major ticks stop at the real sample end,
+            # so the padding cannot be mistaken for additional return data.
+            sample_start = panel["date"].min()
+            sample_end = panel["date"].max()
+            date_span = sample_end - sample_start
+            label_x = sample_end + date_span * 0.018
+            ax.set_xlim(left=sample_start, right=sample_end + date_span * 0.10)
+            tick_dates = pd.date_range(
+                start=pd.Timestamp(year=sample_start.year, month=1, day=1),
+                end=sample_end,
+                freq="4MS",
+            )
+            tick_dates = tick_dates[tick_dates >= sample_start]
+            ax.set_xticks(tick_dates)
+            ax.set_xticklabels(tick_dates.strftime("%Y-%m"))
             for (method, x_last, y_value), label_log in zip(endpoints, stacked_log):
                 ax.scatter(
                     [x_last], [y_value], color=METHOD_COLORS[method], s=16,
                     zorder=4, edgecolor="white", linewidth=0.6,
+                    clip_on=False,
                 )
-                ax.text(
-                    label_x, 10 ** label_log, f"${y_value:.2f}",
-                    color=METHOD_COLORS[method], fontsize=7.5, fontweight="bold",
+                ax.annotate(
+                    f"${y_value:.2f}", xy=(x_last, y_value),
+                    xytext=(label_x, 10 ** label_log), textcoords="data",
+                    color=METHOD_COLORS[method], fontsize=8.5, fontweight="bold",
                     va="center", ha="left",
+                    arrowprops={
+                        "arrowstyle": "-",
+                        "color": METHOD_COLORS[method],
+                        "linewidth": 0.7,
+                        "alpha": 0.75,
+                        "shrinkA": 1.5,
+                        "shrinkB": 2.0,
+                    },
+                    zorder=6,
                 )
     axes[0].set_ylabel("Growth of $1")
     axes[0].legend(loc="upper left", fontsize=8)
-    fig.suptitle(
-        caption(
-            "Figure 1. Out-of-sample growth of $1 by fund family and method",
-            "Walk-forward monthly rebalancing; each formation date uses only information available up to that date.\n"
-            "Note: each panel's y-axis is scaled independently (log scale) - compare methods within a panel, not heights across panels.",
-        )
+    add_figure_heading(
+        "Figure 1. Out-of-sample growth of $1 by fund family and method",
+        "Walk-forward monthly rebalancing; each formation date uses only information available up to that date.\n"
+        "Note: each panel's y-axis is scaled independently (log scale) - compare methods within a panel, not heights across panels.",
+        fig=fig,
     )
     path = FIGURES / "figure_1_fund_growth_of_1.png"
     return finalise_figure(path, FUND_SOURCE, _date_range(fund_returns, "date"), top=0.80)
@@ -264,11 +327,9 @@ def plot_flagship_drawdown(fund_returns: pd.DataFrame) -> pathlib.Path:
         label="Combined Equal Weight (benchmark)",
     )
     plt.axhline(0, color="#262A33", linewidth=0.6)
-    plt.title(
-        caption(
-            "Figure 2. Drawdown: Combined Maximum Sharpe vs. the equal-weight benchmark",
-            "Peak-to-trough decline in growth of $1; the flagship optimised fund is checked against the simplest naive benchmark.",
-        )
+    add_figure_heading(
+        "Figure 2. Drawdown: Combined Maximum Sharpe vs. the equal-weight benchmark",
+        "Peak-to-trough decline in growth of $1; the flagship optimised fund is checked against the simplest naive benchmark.",
     )
     plt.xlabel("Date")
     plt.ylabel("Drawdown (%)")
@@ -323,11 +384,10 @@ def plot_combined_weights_by_asset_class(
         if idx >= 2:
             ax.set_xlabel("Effective date")
     axes_flat[1].legend(loc="upper right", fontsize=8)
-    fig.suptitle(
-        caption(
-            "Figure 3. Combined-fund equity/crypto split over time, across methods",
-            "Target weights from each monthly formation date, grouped to the asset-class level for readability.",
-        )
+    add_figure_heading(
+        "Figure 3. Combined-fund equity/crypto split over time, across methods",
+        "Target weights from each monthly formation date, grouped to the asset-class level for readability.",
+        fig=fig,
     )
     path = FIGURES / "figure_3_combined_weights_by_asset_class.png"
     return finalise_figure(
@@ -376,11 +436,10 @@ def plot_sharpe_barplot(performance_metrics: pd.DataFrame) -> pathlib.Path:
     ax.set_xticks(x)
     ax.set_xticklabels(FUND_FAMILIES)
     ax.set_ylabel("Sharpe ratio (annualised, rf = 0)")
-    ax.set_title(
-        caption(
-            "Figure 4. Annualised Sharpe ratio across funds and methods",
-            "Sharpe ratios from the walk-forward out-of-sample backtest, grouped by fund family; risk-free rate assumed zero.",
-        )
+    add_figure_heading(
+        "Figure 4. Annualised Sharpe ratio across funds and methods",
+        "Sharpe ratios from the walk-forward out-of-sample backtest, grouped by fund family; risk-free rate assumed zero.",
+        fig=fig,
     )
     # Extra headroom above the tallest bar so its value label never collides
     # with the "upper left" method legend, regardless of which bar is tallest.
@@ -458,11 +517,10 @@ def plot_backtest_diagnostics(diagnostics: pd.DataFrame) -> pathlib.Path:
             transform=axes[1].transAxes, ha="center", va="center", fontsize=10, color="#2E7D32",
         )
 
-    fig.suptitle(
-        caption(
-            "Figure 5 (extra). Backtest robustness: turnover and solver fallback by method",
-            "Checks that methods actually trade differently and that the optimizer rarely needs its equal-weight fallback.",
-        )
+    add_figure_heading(
+        "Figure 5 (extra). Backtest robustness: turnover and solver fallback by method",
+        "Checks that methods actually trade differently and that the optimizer rarely needs its equal-weight fallback.",
+        fig=fig,
     )
     path = FIGURES / "figure_5_backtest_diagnostics.png"
     return finalise_figure(
@@ -637,20 +695,13 @@ def plot_extended_sector_sentiment_index(sector_index: pd.DataFrame) -> pathlib.
         "Standardised Extended FinVADER sentiment\n(prior-history expanding z-score)",
         fontsize=10,
     )
-    fig.suptitle(
-        caption(
-            "Figure 6. Standardised Extended FinVADER sector sentiment index, 2021-2023",
-            "Thin line: daily z-score. Bold line: rolling mean of the latest 21 valid sentiment "
-            "observations, for display only - not part of the index, classification, or any other "
-            "analysis. The rolling series remains missing whenever the daily sentiment index is "
-            "missing.\n"
-            "z > 0: sentiment above the sector's own history; z < 0: below; z = 0 matches history, "
-            "not \"no information\". Blank: no news that day, or fewer than 60 prior observations "
-            "- never neutral.",
-        )
+    add_figure_heading(
+        "Figure 6. Extended FinVADER sector sentiment, 2021-2023",
+        "Daily prior-history z-scores and 21-observation rolling means",
+        fig=fig,
     )
     path = FIGURES / "figure_6_extended_sector_sentiment_index.png"
-    return finalise_figure(path, SENTIMENT_SOURCE, _date_range(sector_index, "date"), top=0.91)
+    return finalise_figure(path, SENTIMENT_SOURCE, _date_range(sector_index, "date"), top=0.94)
 
 
 def plot_baseline_vs_extended_sentiment(
@@ -681,11 +732,11 @@ def plot_baseline_vs_extended_sentiment(
     panels = [
         ("Overall aggregate\n(equal-weight mean across sectors)", aggregate),
         (
-            f"{highest_sector}\n(highest custom-term hit rate)",
+            f"{highest_sector}\n(highest custom-lexicon coverage)",
             sector_index.loc[sector_index["sector"] == highest_sector].sort_values("date"),
         ),
         (
-            f"{lowest_sector}\n(lowest custom-term hit rate)",
+            f"{lowest_sector}\n(lowest custom-lexicon coverage)",
             sector_index.loc[sector_index["sector"] == lowest_sector].sort_values("date"),
         ),
     ]
@@ -706,15 +757,14 @@ def plot_baseline_vs_extended_sentiment(
     axes[0].set_ylabel("Standardised sentiment (expanding z-score)")
     axes[0].legend(loc="upper left", fontsize=8)
 
-    fig.suptitle(
-        caption(
-            "Figure 7. Baseline vs. Extended FinVADER, 2021-2023",
-            "Selection rule: overall aggregate, plus the highest- and lowest-hit-rate sectors from "
-            "results/tables/sector_sentiment_model_comparison.csv (custom_term_hit_rate).",
-        )
+    add_figure_heading(
+        "Figure 7. Baseline versus Extended FinVADER, 2021-2023",
+        "Overall market sentiment and sectors with the highest and lowest "
+        "custom-lexicon coverage",
+        fig=fig,
     )
     path = FIGURES / "figure_7_baseline_vs_extended_sentiment.png"
-    return finalise_figure(path, SENTIMENT_SOURCE, _date_range(sector_index, "date"), top=0.84)
+    return finalise_figure(path, SENTIMENT_SOURCE, _date_range(sector_index, "date"), top=0.88)
 
 
 # ----------------------------------------------------------------------------
@@ -819,20 +869,14 @@ def plot_market_wide_sentiment_index(sector_index: pd.DataFrame) -> pathlib.Path
     upper.set_xlim(start_date, end_date)
     lower.set_xlim(start_date, end_date)
 
-    fig.suptitle(
-        caption(
-            "Figure 9. Market-wide Extended FinVADER news sentiment, 2021-2023",
-            "Each day is the equal-weight mean across sectors with a valid reading that day; sectors are not "
-            "weighted by headline or ticker count.\n"
-            "The 0-100 score is a linear relabelling of the raw compound score (50 = compound 0), not a "
-            "probability or a return forecast. The lower panel averages the\n"
-            "sectors' own expanding z-scores and is not re-standardised. Blank stretches are missing readings "
-            "or the 60-observation warm-up; the rolling mean is display only.",
-        )
+    add_figure_heading(
+        "Figure 9. Market-wide Extended FinVADER sentiment, 2021-2023",
+        "Equal-weight sector aggregate: sentiment level and relative historical position",
+        fig=fig,
     )
     path = FIGURES / "figure_9_market_wide_sentiment_index.png"
     return finalise_figure(
-        path, EXTENDED_SENTIMENT_SOURCE, _date_range(aggregate, "date"), top=0.93
+        path, EXTENDED_SENTIMENT_SOURCE, _date_range(aggregate, "date"), top=0.95
     )
 
 
@@ -900,15 +944,14 @@ def plot_sector_sentiment_ranking(sector_index: pd.DataFrame) -> pathlib.Path:
     )
 
     day_counts = ranking["n_valid_sector_days"]
-    fig.suptitle(
-        caption(
-            "Figure 10. Average Extended FinVADER sentiment by equity sector, 2021-2023",
-            "Descriptive mean and median of the raw compound score over each sector's valid sector-days "
-            f"({int(day_counts.min())}-{int(day_counts.max())} days per sector);\n"
-            "missing sector-days are excluded rather than treated as neutral, and sectors are not weighted "
-            "by headline count. Differences between sectors are\n"
-            "descriptive only - they are not a significance test, a causal claim, or a forecast of future returns.",
-        )
+    add_figure_heading(
+        "Figure 10. Average Extended FinVADER sentiment by equity sector, 2021-2023",
+        "Descriptive mean and median of the raw compound score over each sector's valid sector-days "
+        f"({int(day_counts.min())}-{int(day_counts.max())} days per sector);\n"
+        "missing sector-days are excluded rather than treated as neutral, and sectors are not weighted "
+        "by headline count. Differences between sectors are\n"
+        "descriptive only - they are not a significance test, a causal claim, or a forecast of future returns.",
+        fig=fig,
     )
     path = FIGURES / "figure_10_sector_sentiment_ranking.png"
     return finalise_figure(
@@ -1215,7 +1258,14 @@ def _variant_weight_diagnostics(
 
 
 def plot_fusion_before_vs_after(fusion_returns: pd.DataFrame) -> pathlib.Path:
-    """Figure 8: growth of $1 for the base fund and the two extended tilts."""
+    """Figure 8: growth of $1 for the base fund and two extended tilts.
+
+    Word-caption detail: all three series use the same Equity-Only Minimum
+    Variance book, backtest engine, rebalance dates, and transaction-cost
+    assumption. They differ only in the sentiment tilt applied to target
+    weights. The +1 and -1 directions were fixed in advance rather than
+    selected after observing these results.
+    """
     sentiment.assert_application_period_only(
         fusion_returns["date"], context="figure_8 fusion_returns input"
     )
@@ -1231,21 +1281,15 @@ def plot_fusion_before_vs_after(fusion_returns: pd.DataFrame) -> pathlib.Path:
     plt.axhline(1.0, color="#4B5563", linewidth=0.6, linestyle=":")
     plt.xlabel("Date")
     plt.ylabel("Growth of $1 (net of transaction costs)")
-    plt.title(
-        caption(
-            "Figure 8. Extended sentiment tilt vs. the untilted base fund, 2021-2023",
-            "All three series are the same Equity-Only Minimum Variance book, priced with "
-            "the same backtest engine, rebalance dates and transaction-cost assumption;\n"
-            "they differ only in the sentiment tilt applied to the target weights.\n"
-            "lambda = +1 and lambda = -1 are two directions fixed in advance, not a tilt "
-            "strength selected from these results.",
-        )
+    add_figure_heading(
+        "Figure 8. Extended sentiment tilt versus the untilted base fund, 2021-2023",
+        "Equity-Only Minimum Variance, net of transaction costs",
     )
     plt.legend(loc="upper left", fontsize=8, frameon=True, facecolor="white",
                edgecolor="#D8DDE6", framealpha=0.94)
     path = FIGURES / "figure_8_fusion_before_vs_after.png"
     return finalise_figure(
-        path, FUSION_SOURCE, _date_range(fusion_returns, "date"), top=0.84
+        path, FUSION_SOURCE, _date_range(fusion_returns, "date"), top=0.94
     )
 
 

@@ -33,7 +33,7 @@ The Streamlit application provides four main investor views:
 - **Fund Comparison:** compare all 12 fund-family and portfolio-method combinations using consistent out-of-sample performance metrics.
 - **Fund Fact Sheet:** inspect growth of $1, drawdown, annualised return, volatility, Sharpe ratio, and current holdings for a selected fund.
 - **Allocation Lab:** create an illustrative allocation across the available funds and inspect the combined historical risk-return profile.
-- **Sentiment Analytics:** explore sector sentiment, compare the baseline and extended finance lexicons, and evaluate the base, momentum, and contrarian sentiment portfolios.
+- **Sentiment Analytics:** explore the production Extended FinVADER sector sentiment index and evaluate the base, momentum, and contrarian sentiment portfolios. The baseline-versus-extended validation is documented in the model-validation exhibit.
 
 The allocation tool is illustrative only and does not execute trades or represent a recommendation.
 
