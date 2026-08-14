@@ -532,3 +532,46 @@ I found no material errors or issues requiring correction. The task remained lim
 ### What I changed and why
 
 I made no follow-up changes because the AI followed the requested scope and did not alter the completed analysis or application.
+
+
+## Prompt Log 10 - Figure presentation corrections
+
+### What I wanted
+
+I wanted to improve the figures' sample-period presentation, readability, and client-facing appearance in the report without changing the
+underlying data or analytical results.
+
+### Prompt(s)
+
+I asked the AI to:
+
+- adjust Figure 1's horizontal axis so that it did not display 2024;
+- shorten the in-figure titles and notes in Figures 6, 8, and 9, leaving detailed methodology in the Word captions;
+- remove internal file paths and raw field names from Figure 7;
+- standardise all figures by using bold titles and non-bold notes; and
+- modify only the relevant files without changing other code or results.
+
+### What the assistant produced
+
+The AI adjusted the relevant figures' date boundaries, titles, explanatory text, and formatting. Figure 7's internal technical wording was
+replaced with clearer, client-facing language.
+
+### What was wrong or risky
+
+After the first adjustment, Figure 1's horizontal axis was too tight. The ending price label obscured part of the trend and reduced the clarity of
+the chart.
+
+### What I changed and why
+
+I asked the AI to add appropriate space to the right side of Figure 1 so that the ending price label could be displayed clearly, while ensuring
+that no 2024 tick appeared on the axis.
+
+### How I verified it
+
+I checked that:
+
+- Figure 1 did not display 2024 and its ending price label no longer obscured the trend;
+- Figures 6, 8, and 9 remained readable at A4 report width;
+- Figure 7 no longer displayed internal paths or raw field names such as `custom_term_hit_rate`;
+- every figure used bold titles and non-bold notes; and
+- the underlying data, calculations, and unrelated files remained unchanged.
